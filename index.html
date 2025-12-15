@@ -1,0 +1,441 @@
+<html lang="en" class="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Scheduler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a; /* Neutral 950 substitute for deeper black */
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #171717;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #525252;
+        }
+        /* Hide scrollbar for clean horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-neutral-400 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+    <!-- Mobile Navigation (Bottom) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-neutral-950/80 backdrop-blur-xl border-t border-neutral-800 flex justify-around items-center z-50">
+        <button class="flex flex-col items-center gap-1 text-amber-500">
+            <iconify-icon icon="lucide:layout-dashboard" width="20" stroke-width="1.5"></iconify-icon>
+            <span class="text-[10px] font-medium">Home</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors">
+            <iconify-icon icon="lucide:book-open" width="20" stroke-width="1.5"></iconify-icon>
+            <span class="text-[10px] font-medium">Courses</span>
+        </button>
+        <div class="relative -top-5">
+            <button class="flex items-center justify-center w-12 h-12 bg-gradient-to-tr from-amber-600 to-amber-400 rounded-full text-black shadow-lg shadow-amber-900/20 active:scale-95 transition-transform">
+                <iconify-icon icon="lucide:plus" width="24" stroke-width="1.5"></iconify-icon>
+            </button>
+        </div>
+        <button class="flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors">
+            <iconify-icon icon="lucide:calendar-clock" width="20" stroke-width="1.5"></iconify-icon>
+            <span class="text-[10px] font-medium">Schedule</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors">
+            <iconify-icon icon="lucide:settings-2" width="20" stroke-width="1.5"></iconify-icon>
+            <span class="text-[10px] font-medium">Settings</span>
+        </button>
+    </nav>
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden md:flex fixed top-0 left-0 h-full w-64 bg-black border-r border-neutral-800 flex-col p-6 z-40">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-neutral-800 to-black border border-neutral-700 flex items-center justify-center text-amber-500">
+                <iconify-icon icon="lucide:layers" width="18" stroke-width="1.5"></iconify-icon>
+            </div>
+            <span class="text-white tracking-tight font-medium text-lg">SCHEDULER</span>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-neutral-900/50 text-white border border-neutral-800/50 group transition-all">
+                <iconify-icon icon="lucide:layout-dashboard" width="18" stroke-width="1.5" class="text-amber-500"></iconify-icon>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
+                <iconify-icon icon="lucide:book-open" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Courses</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
+                <iconify-icon icon="lucide:check-square" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Assignments</span>
+                <span class="ml-auto text-xs bg-neutral-800 text-neutral-300 py-0.5 px-2 rounded-full border border-neutral-700">8</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
+                <iconify-icon icon="lucide:calendar-days" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Calendar</span>
+            </a>
+        </nav>
+
+        <!-- Categories -->
+        <div class="mt-8">
+            <h3 class="px-3 text-xs font-medium text-neutral-500 uppercase tracking-widest mb-3">Categories</h3>
+            <div class="space-y-1">
+                <button class="w-full flex items-center gap-3 px-3 py-1.5 rounded-md hover:bg-neutral-900/50 text-neutral-400 hover:text-neutral-200 text-sm transition-all group">
+                    <span class="w-2 h-2 rounded-full border border-amber-500/50 bg-amber-500/10"></span>
+                    Exams
+                </button>
+                <button class="w-full flex items-center gap-3 px-3 py-1.5 rounded-md hover:bg-neutral-900/50 text-neutral-400 hover:text-neutral-200 text-sm transition-all group">
+                    <span class="w-2 h-2 rounded-full border border-indigo-500/50 bg-indigo-500/10"></span>
+                    Homework
+                </button>
+                <button class="w-full flex items-center gap-3 px-3 py-1.5 rounded-md hover:bg-neutral-900/50 text-neutral-400 hover:text-neutral-200 text-sm transition-all group">
+                    <span class="w-2 h-2 rounded-full border border-emerald-500/50 bg-emerald-500/10"></span>
+                    Projects
+                </button>
+            </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="mt-auto border-t border-neutral-800 pt-4 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-neutral-700 to-neutral-600 border border-neutral-500 flex items-center justify-center text-xs text-white font-medium">
+                JS
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-white truncate">John Scholar</p>
+                <p class="text-xs text-neutral-500 truncate">Computer Science</p>
+            </div>
+            <button class="text-neutral-500 hover:text-white">
+                <iconify-icon icon="lucide:log-out" width="16" stroke-width="1.5"></iconify-icon>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 min-h-screen pb-24 md:pb-8">
+        
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-30 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-lg font-medium text-white tracking-tight">Overview</h1>
+                <p class="text-xs text-neutral-500">Tuesday, October 24</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex relative group">
+                    <input type="text" placeholder="Search tasks..." class="bg-neutral-900 border border-neutral-800 text-sm rounded-lg pl-9 pr-3 py-1.5 focus:outline-none focus:border-neutral-600 text-neutral-300 w-64 transition-colors placeholder:text-neutral-600">
+                    <iconify-icon icon="lucide:search" class="absolute left-3 top-2 text-neutral-600 group-focus-within:text-neutral-400 transition-colors" width="16"></iconify-icon>
+                </div>
+                <button class="relative text-neutral-400 hover:text-amber-400 transition-colors">
+                    <iconify-icon icon="lucide:bell" width="20" stroke-width="1.5"></iconify-icon>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-amber-500 rounded-full border-2 border-neutral-950"></span>
+                </button>
+                <button class="md:hidden hidden bg-amber-500 text-black text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-amber-400 transition-colors">
+                    New Task
+                </button>
+            </div>
+        </header>
+
+        <div class="p-6 max-w-7xl mx-auto space-y-8">
+            
+            <!-- Stats Row -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Stat Card 1 -->
+                <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 rounded-lg bg-neutral-800/50 text-neutral-400 group-hover:text-amber-400 transition-colors">
+                            <iconify-icon icon="lucide:clock" width="20" stroke-width="1.5"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-amber-500 bg-amber-500/10 px-2 py-1 rounded">Urgent</span>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-2xl font-medium text-white tracking-tight">3</h3>
+                        <p class="text-sm text-neutral-500">Assignments due in <span class="text-neutral-300">48 hours</span></p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 rounded-lg bg-neutral-800/50 text-neutral-400 group-hover:text-emerald-400 transition-colors">
+                            <iconify-icon icon="lucide:check-circle-2" width="20" stroke-width="1.5"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-2xl font-medium text-white tracking-tight">12</h3>
+                        <p class="text-sm text-neutral-500">Tasks completed this week</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 rounded-lg bg-neutral-800/50 text-neutral-400 group-hover:text-indigo-400 transition-colors">
+                            <iconify-icon icon="lucide:graduation-cap" width="20" stroke-width="1.5"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-2xl font-medium text-white tracking-tight">3.8</h3>
+                        <p class="text-sm text-neutral-500">Current Semester GPA</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Courses Scroll -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-medium text-white uppercase tracking-widest">Active Courses</h2>
+                    <button class="text-xs text-amber-500 hover:text-amber-400 transition-colors">View All</button>
+                </div>
+                
+                <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                    <!-- Course 1 -->
+                    <div class="min-w-[260px] p-5 rounded-xl bg-gradient-to-br from-neutral-900 to-black border border-neutral-800 relative group overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-amber-500/50 group-hover:bg-amber-400 transition-colors"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-xs font-mono text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">MATH 175</span>
+                            <button class="text-neutral-600 hover:text-white"><iconify-icon icon="lucide:more-horizontal" width="16"></iconify-icon></button>
+                        </div>
+                        <h3 class="text-lg font-medium text-white mb-1">Calculus II</h3>
+                        <p class="text-xs text-neutral-500 mb-4">Prof. Alexander Hamilton</p>
+                        <div class="w-full bg-neutral-800 h-1 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: 75%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-[10px] text-neutral-400">
+                            <span>Progress</span>
+                            <span>75%</span>
+                        </div>
+                    </div>
+
+                    <!-- Course 2 -->
+                    <div class="min-w-[260px] p-5 rounded-xl bg-gradient-to-br from-neutral-900 to-black border border-neutral-800 relative group overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-neutral-700 group-hover:bg-neutral-500 transition-colors"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-xs font-mono text-neutral-400 bg-neutral-800 px-1.5 py-0.5 rounded border border-neutral-700">CS 201</span>
+                            <button class="text-neutral-600 hover:text-white"><iconify-icon icon="lucide:more-horizontal" width="16"></iconify-icon></button>
+                        </div>
+                        <h3 class="text-lg font-medium text-white mb-1">Data Structures</h3>
+                        <p class="text-xs text-neutral-500 mb-4">Prof. Ada Lovelace</p>
+                        <div class="w-full bg-neutral-800 h-1 rounded-full overflow-hidden">
+                            <div class="bg-neutral-500 h-full rounded-full" style="width: 45%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-[10px] text-neutral-400">
+                            <span>Progress</span>
+                            <span>45%</span>
+                        </div>
+                    </div>
+
+                    <!-- Course 3 -->
+                    <div class="min-w-[260px] p-5 rounded-xl bg-gradient-to-br from-neutral-900 to-black border border-neutral-800 relative group overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500/50 group-hover:bg-indigo-400 transition-colors"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">PHYS 101</span>
+                            <button class="text-neutral-600 hover:text-white"><iconify-icon icon="lucide:more-horizontal" width="16"></iconify-icon></button>
+                        </div>
+                        <h3 class="text-lg font-medium text-white mb-1">General Physics</h3>
+                        <p class="text-xs text-neutral-500 mb-4">Prof. Richard Feynman</p>
+                        <div class="w-full bg-neutral-800 h-1 rounded-full overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full" style="width: 30%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-[10px] text-neutral-400">
+                            <span>Progress</span>
+                            <span>30%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Course -->
+                    <button class="min-w-[100px] rounded-xl border border-dashed border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900/30 transition-all flex flex-col items-center justify-center gap-2 text-neutral-600 hover:text-neutral-400">
+                        <iconify-icon icon="lucide:plus" width="24" stroke-width="1.5"></iconify-icon>
+                        <span class="text-xs font-medium">Add Course</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Assignments Table -->
+            <section class="bg-neutral-900/20 border border-neutral-800 rounded-xl overflow-hidden backdrop-blur-sm">
+                <div class="px-6 py-4 border-b border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h2 class="text-sm font-medium text-white uppercase tracking-widest flex items-center gap-2">
+                        Upcoming Tasks
+                        <span class="bg-neutral-800 text-neutral-400 text-[10px] px-2 py-0.5 rounded-full">5 Pending</span>
+                    </h2>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-neutral-500">Sort by:</span>
+                        <select class="bg-transparent text-neutral-300 font-medium focus:outline-none cursor-pointer">
+                            <option>Due Date</option>
+                            <option>Priority</option>
+                            <option>Course</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table Header -->
+                <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-neutral-800/50 bg-neutral-900/50 text-xs font-medium text-neutral-500 uppercase tracking-wider hidden sm:grid">
+                    <div class="col-span-1">Status</div>
+                    <div class="col-span-5">Assignment</div>
+                    <div class="col-span-3">Category</div>
+                    <div class="col-span-3 text-right">Due Date</div>
+                </div>
+
+                <!-- List Items -->
+                <div class="divide-y divide-neutral-800/50">
+                    
+                    <!-- Task Item 1 -->
+                    <div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-neutral-900/40 transition-colors">
+                        <div class="col-span-2 sm:col-span-1 flex items-center">
+                            <!-- Custom Checkbox -->
+                            <label class="relative flex items-center cursor-pointer">
+                                <input type="checkbox" class="peer h-4 w-4 appearance-none rounded border border-neutral-600 bg-neutral-900 checked:border-amber-500 checked:bg-amber-500 transition-all">
+                                <iconify-icon icon="lucide:check" class="absolute left-0.5 top-0.5 text-black opacity-0 peer-checked:opacity-100 pointer-events-none" width="12" stroke-width="3"></iconify-icon>
+                            </label>
+                        </div>
+                        <div class="col-span-10 sm:col-span-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-neutral-200 font-medium group-hover:text-white transition-colors">Integration by Parts Quiz</span>
+                                <span class="text-xs text-neutral-500 font-mono mt-0.5">MATH 175 • Calculus II</span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 flex items-center mt-2 sm:mt-0">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium border border-amber-500/20 bg-amber-500/5 text-amber-500">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                Quiz
+                            </span>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 text-right mt-2 sm:mt-0 flex flex-col items-end justify-center">
+                            <span class="text-sm text-amber-400 font-medium">Tomorrow</span>
+                            <span class="text-[10px] text-neutral-600">1 day remaining</span>
+                        </div>
+                    </div>
+
+                    <!-- Task Item 2 -->
+                    <div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-neutral-900/40 transition-colors">
+                        <div class="col-span-2 sm:col-span-1 flex items-center">
+                             <label class="relative flex items-center cursor-pointer">
+                                <input type="checkbox" class="peer h-4 w-4 appearance-none rounded border border-neutral-600 bg-neutral-900 checked:border-amber-500 checked:bg-amber-500 transition-all">
+                                <iconify-icon icon="lucide:check" class="absolute left-0.5 top-0.5 text-black opacity-0 peer-checked:opacity-100 pointer-events-none" width="12" stroke-width="3"></iconify-icon>
+                            </label>
+                        </div>
+                        <div class="col-span-10 sm:col-span-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-neutral-200 font-medium group-hover:text-white transition-colors">Binary Trees Project</span>
+                                <span class="text-xs text-neutral-500 font-mono mt-0.5">CS 201 • Data Structures</span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 flex items-center mt-2 sm:mt-0">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium border border-emerald-500/20 bg-emerald-500/5 text-emerald-500">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                Project
+                            </span>
+                            <!-- Custom Status Dropdown Trigger -->
+                             <div class="ml-3 relative group/status">
+                                <button class="text-[10px] text-amber-400 font-medium flex items-center gap-1 hover:underline decoration-amber-500/50 underline-offset-2">
+                                    In Progress
+                                    <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon>
+                                </button>
+                             </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 text-right mt-2 sm:mt-0 flex flex-col items-end justify-center">
+                            <span class="text-sm text-neutral-300">Oct 28</span>
+                            <span class="text-[10px] text-neutral-500">4 days remaining</span>
+                        </div>
+                    </div>
+
+                    <!-- Task Item 3 -->
+                    <div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-neutral-900/40 transition-colors">
+                        <div class="col-span-2 sm:col-span-1 flex items-center">
+                             <label class="relative flex items-center cursor-pointer">
+                                <input type="checkbox" class="peer h-4 w-4 appearance-none rounded border border-neutral-600 bg-neutral-900 checked:border-amber-500 checked:bg-amber-500 transition-all">
+                                <iconify-icon icon="lucide:check" class="absolute left-0.5 top-0.5 text-black opacity-0 peer-checked:opacity-100 pointer-events-none" width="12" stroke-width="3"></iconify-icon>
+                            </label>
+                        </div>
+                        <div class="col-span-10 sm:col-span-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-neutral-200 font-medium group-hover:text-white transition-colors">Newton's Laws Lab Report</span>
+                                <span class="text-xs text-neutral-500 font-mono mt-0.5">PHYS 101 • General Physics</span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 flex items-center mt-2 sm:mt-0">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium border border-indigo-500/20 bg-indigo-500/5 text-indigo-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                Lab
+                            </span>
+                            <div class="ml-3">
+                                <button class="text-[10px] text-neutral-500 font-medium flex items-center gap-1 hover:text-neutral-300">
+                                    Not Started
+                                    <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon>
+                                </button>
+                             </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 text-right mt-2 sm:mt-0 flex flex-col items-end justify-center">
+                            <span class="text-sm text-neutral-300">Nov 02</span>
+                            <span class="text-[10px] text-neutral-500">9 days remaining</span>
+                        </div>
+                    </div>
+
+                    <!-- Task Item 4 (Done) -->
+                    <div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center bg-neutral-900/20 opacity-60 hover:opacity-100 transition-all">
+                        <div class="col-span-2 sm:col-span-1 flex items-center">
+                             <label class="relative flex items-center cursor-pointer">
+                                <input type="checkbox" checked="" class="peer h-4 w-4 appearance-none rounded border border-neutral-700 bg-neutral-900 checked:border-neutral-600 checked:bg-neutral-600 transition-all">
+                                <iconify-icon icon="lucide:check" class="absolute left-0.5 top-0.5 text-neutral-300 opacity-0 peer-checked:opacity-100 pointer-events-none" width="12" stroke-width="3"></iconify-icon>
+                            </label>
+                        </div>
+                        <div class="col-span-10 sm:col-span-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-neutral-500 line-through decoration-neutral-700">Read Chapter 4</span>
+                                <span class="text-xs text-neutral-600 font-mono mt-0.5">MATH 175 • Calculus II</span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 flex items-center mt-2 sm:mt-0">
+                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium border border-neutral-700 bg-neutral-800 text-neutral-500">
+                                <span class="w-1.5 h-1.5 rounded-full bg-neutral-500"></span>
+                                Reading
+                            </span>
+                             <div class="ml-3">
+                                <span class="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                                    Completed
+                                </span>
+                             </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3 text-right mt-2 sm:mt-0 flex flex-col items-end justify-center">
+                            <span class="text-sm text-neutral-600">Yesterday</span>
+                            <span class="text-[10px] text-neutral-700">Done</span>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Footer Action -->
+                <div class="px-6 py-3 border-t border-neutral-800 bg-neutral-900/30 text-center">
+                    <button class="text-xs text-neutral-500 hover:text-white transition-colors flex items-center justify-center gap-2 w-full">
+                        <iconify-icon icon="lucide:plus-circle" width="14"></iconify-icon>
+                        Add New Assignment
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Floating Action Button (Desktop Only - positioned bottom right) -->
+    <button class="hidden md:flex fixed bottom-8 right-8 w-14 h-14 bg-amber-500 hover:bg-amber-400 text-black rounded-full items-center justify-center shadow-lg shadow-amber-900/20 active:scale-95 transition-all z-40 group">
+        <iconify-icon icon="lucide:plus" width="28" stroke-width="1.5" class="group-hover:rotate-90 transition-transform duration-300"></iconify-icon>
+    </button>
+
+
+</body></html>
