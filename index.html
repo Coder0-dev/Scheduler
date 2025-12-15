@@ -8,11 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-        }
-        /* Custom Scrollbar */
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #171717; }
         ::-webkit-scrollbar-thumb { background: #404040; border-radius: 3px; }
@@ -20,16 +16,13 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Modal Transition */
-        .modal-enter { opacity: 0; transform: scale(0.95); }
-        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 200ms, transform 200ms; }
-        .modal-exit { opacity: 1; transform: scale(1); }
-        .modal-exit-active { opacity: 0; transform: scale(0.95); transition: opacity 200ms, transform 200ms; }
+        /* Calendar Specifics */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
     </style>
 </head>
 <body class="text-neutral-400 antialiased selection:bg-amber-500/30 selection:text-amber-200 overflow-hidden">
 
-    <!-- AUTH SCREEN (Login/Signup) -->
+    <!-- AUTH SCREEN -->
     <div id="auth-screen" class="fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center p-6 hidden">
         <div class="w-full max-w-sm space-y-8">
             <div class="flex flex-col items-center text-center">
@@ -39,7 +32,6 @@
                 <h2 class="text-2xl font-semibold text-white tracking-tight">Welcome back</h2>
                 <p class="text-sm text-neutral-500 mt-2">Enter your details to access your workspace.</p>
             </div>
-            
             <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event)">
                 <div class="space-y-1">
                     <label class="text-xs font-medium text-neutral-500 ml-1">Full Name</label>
@@ -54,15 +46,15 @@
     </div>
 
     <!-- MAIN APP WRAPPER -->
-    <div id="app-screen" class="hidden h-screen overflow-y-auto">
+    <div id="app-screen" class="hidden h-screen overflow-y-auto flex flex-col md:flex-row">
         
         <!-- Mobile Navigation (Bottom) -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-neutral-950/80 backdrop-blur-xl border-t border-neutral-800 flex justify-around items-center z-50">
-            <button class="flex flex-col items-center gap-1 text-amber-500">
+            <button onclick="switchView('dashboard')" class="nav-btn-mobile flex flex-col items-center gap-1 text-amber-500" data-target="dashboard">
                 <iconify-icon icon="lucide:layout-dashboard" width="20" stroke-width="1.5"></iconify-icon>
                 <span class="text-[10px] font-medium">Home</span>
             </button>
-            <button class="flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors">
+            <button onclick="switchView('courses')" class="nav-btn-mobile flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors" data-target="courses">
                 <iconify-icon icon="lucide:book-open" width="20" stroke-width="1.5"></iconify-icon>
                 <span class="text-[10px] font-medium">Courses</span>
             </button>
@@ -71,11 +63,11 @@
                     <iconify-icon icon="lucide:plus" width="24" stroke-width="1.5"></iconify-icon>
                 </button>
             </div>
-            <button class="flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors">
+            <button onclick="switchView('calendar')" class="nav-btn-mobile flex flex-col items-center gap-1 text-neutral-500 hover:text-neutral-300 transition-colors" data-target="calendar">
                 <iconify-icon icon="lucide:calendar-clock" width="20" stroke-width="1.5"></iconify-icon>
                 <span class="text-[10px] font-medium">Schedule</span>
             </button>
-            <button id="mobile-logout" onclick="handleLogout()" class="flex flex-col items-center gap-1 text-neutral-500 hover:text-red-400 transition-colors">
+            <button onclick="handleLogout()" class="flex flex-col items-center gap-1 text-neutral-500 hover:text-red-400 transition-colors">
                 <iconify-icon icon="lucide:log-out" width="20" stroke-width="1.5"></iconify-icon>
                 <span class="text-[10px] font-medium">Exit</span>
             </button>
@@ -93,32 +85,25 @@
 
             <!-- Nav Links -->
             <nav class="flex-1 space-y-1">
-                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-neutral-900/50 text-white border border-neutral-800/50 group transition-all">
-                    <iconify-icon icon="lucide:layout-dashboard" width="18" stroke-width="1.5" class="text-amber-500"></iconify-icon>
+                <button onclick="switchView('dashboard')" class="nav-btn-desktop w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-neutral-900/50 text-white border border-neutral-800/50 group transition-all" data-target="dashboard">
+                    <iconify-icon icon="lucide:layout-dashboard" width="18" stroke-width="1.5" class="icon"></iconify-icon>
                     <span class="text-sm font-medium">Dashboard</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
-                    <iconify-icon icon="lucide:book-open" width="18" stroke-width="1.5"></iconify-icon>
+                </button>
+                <button onclick="switchView('courses')" class="nav-btn-desktop w-full flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all" data-target="courses">
+                    <iconify-icon icon="lucide:book-open" width="18" stroke-width="1.5" class="icon"></iconify-icon>
                     <span class="text-sm font-medium">Courses</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
-                    <iconify-icon icon="lucide:check-square" width="18" stroke-width="1.5"></iconify-icon>
-                    <span class="text-sm font-medium">Assignments</span>
-                    <span id="sidebar-count" class="ml-auto text-xs bg-neutral-800 text-neutral-300 py-0.5 px-2 rounded-full border border-neutral-700">0</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all">
-                    <iconify-icon icon="lucide:calendar-days" width="18" stroke-width="1.5"></iconify-icon>
+                </button>
+                <button onclick="switchView('calendar')" class="nav-btn-desktop w-full flex items-center gap-3 px-3 py-2 rounded-lg text-neutral-400 hover:bg-neutral-900 hover:text-white transition-all" data-target="calendar">
+                    <iconify-icon icon="lucide:calendar-days" width="18" stroke-width="1.5" class="icon"></iconify-icon>
                     <span class="text-sm font-medium">Calendar</span>
-                </a>
+                </button>
             </nav>
 
             <!-- User Profile -->
             <div class="mt-auto border-t border-neutral-800 pt-4 flex items-center gap-3">
-                <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-neutral-700 to-neutral-600 border border-neutral-500 flex items-center justify-center text-xs text-white font-medium">
-                    <!-- Initials injected via JS -->
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p id="user-name" class="text-sm font-medium text-white truncate"><!-- Name injected via JS --></p>
+                <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-neutral-700 to-neutral-600 border border-neutral-500 flex items-center justify-center text-xs text-white font-medium"></div>
+                <div class="flex-1 min-w-0 text-left">
+                    <p id="user-name" class="text-sm font-medium text-white truncate"></p>
                     <p class="text-xs text-neutral-500 truncate">Computer Science</p>
                 </div>
                 <button onclick="handleLogout()" class="text-neutral-500 hover:text-red-400 transition-colors" title="Sign Out">
@@ -127,14 +112,14 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="md:ml-64 min-h-screen pb-24 md:pb-8">
+        <!-- Main Content Area -->
+        <main class="md:ml-64 w-full min-h-screen pb-24 md:pb-8 flex flex-col">
             
             <!-- Top Bar -->
             <header class="sticky top-0 z-30 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
                 <div>
-                    <h1 class="text-lg font-medium text-white tracking-tight">Overview</h1>
-                    <p id="current-date" class="text-xs text-neutral-500"><!-- Date via JS --></p>
+                    <h1 id="page-title" class="text-lg font-medium text-white tracking-tight">Overview</h1>
+                    <p id="current-date" class="text-xs text-neutral-500"></p>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="hidden md:flex relative group">
@@ -151,8 +136,8 @@
                 </div>
             </header>
 
-            <div class="p-6 max-w-7xl mx-auto space-y-8">
-                
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="p-6 max-w-7xl mx-auto space-y-8 w-full view-section">
                 <!-- Stats Row -->
                 <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
@@ -167,7 +152,6 @@
                             <p class="text-sm text-neutral-500">Assignments due soon</p>
                         </div>
                     </div>
-                    <!-- Other stats static for demo -->
                     <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
                         <div class="flex justify-between items-start mb-4">
                             <div class="p-2 rounded-lg bg-neutral-800/50 text-neutral-400 group-hover:text-emerald-400 transition-colors">
@@ -175,8 +159,8 @@
                             </div>
                         </div>
                         <div class="space-y-1">
-                            <h3 class="text-2xl font-medium text-white tracking-tight">12</h3>
-                            <p class="text-sm text-neutral-500">Tasks completed this week</p>
+                            <h3 id="stat-completed" class="text-2xl font-medium text-white tracking-tight">0</h3>
+                            <p class="text-sm text-neutral-500">Tasks completed total</p>
                         </div>
                     </div>
                     <div class="p-5 rounded-xl bg-neutral-900/30 border border-neutral-800 hover:border-neutral-700 transition-colors group">
@@ -199,13 +183,25 @@
                             Active Tasks
                             <span id="task-badge" class="bg-neutral-800 text-neutral-400 text-[10px] px-2 py-0.5 rounded-full">0 Pending</span>
                         </h2>
-                        <div class="flex items-center gap-2 text-xs">
-                            <span class="text-neutral-500">Sort by:</span>
-                            <!-- Fixed Dropdown Styling -->
-                            <select onchange="sortTasks(this.value)" class="bg-transparent text-neutral-300 font-medium focus:outline-none cursor-pointer border-none py-0">
-                                <option value="date" class="bg-neutral-900 text-neutral-300">Due Date</option>
-                                <option value="alpha" class="bg-neutral-900 text-neutral-300">Name</option>
-                            </select>
+                        <div class="flex items-center gap-4 text-xs flex-wrap">
+                            <div class="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-lg px-2 py-1">
+                                <iconify-icon icon="lucide:filter" width="14" class="text-neutral-500"></iconify-icon>
+                                <select onchange="filterTasks(this.value)" class="bg-transparent text-neutral-300 font-medium focus:outline-none cursor-pointer border-none py-0 pr-2">
+                                    <option value="all" class="bg-neutral-900">All Categories</option>
+                                    <option value="Homework" class="bg-neutral-900">Homework</option>
+                                    <option value="Quiz" class="bg-neutral-900">Quiz</option>
+                                    <option value="Project" class="bg-neutral-900">Project</option>
+                                    <option value="Exam" class="bg-neutral-900">Exam</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-lg px-2 py-1">
+                                <iconify-icon icon="lucide:arrow-up-down" width="14" class="text-neutral-500"></iconify-icon>
+                                <select onchange="sortTasks(this.value)" class="bg-transparent text-neutral-300 font-medium focus:outline-none cursor-pointer border-none py-0 pr-2">
+                                    <option value="date" class="bg-neutral-900">Sort by Date</option>
+                                    <option value="alpha" class="bg-neutral-900">Sort by Name</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -221,25 +217,50 @@
                     <div id="task-list" class="divide-y divide-neutral-800/50 min-h-[200px]">
                         <!-- JS renders tasks here -->
                     </div>
-                    
-                    <!-- Footer Action -->
-                    <div class="px-6 py-3 border-t border-neutral-800 bg-neutral-900/30 text-center">
-                        <button onclick="openModal()" class="text-xs text-neutral-500 hover:text-white transition-colors flex items-center justify-center gap-2 w-full">
-                            <iconify-icon icon="lucide:plus-circle" width="14"></iconify-icon>
-                            Add New Assignment
-                        </button>
-                    </div>
                 </section>
             </div>
+
+            <!-- VIEW: COURSES -->
+            <div id="view-courses" class="p-6 max-w-7xl mx-auto space-y-6 w-full hidden view-section">
+                <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Course cards injected via JS -->
+                </div>
+            </div>
+
+            <!-- VIEW: CALENDAR -->
+            <div id="view-calendar" class="p-6 max-w-7xl mx-auto w-full h-full flex flex-col hidden view-section">
+                <div class="bg-neutral-900/20 border border-neutral-800 rounded-xl overflow-hidden backdrop-blur-sm flex flex-col h-full min-h-[500px]">
+                    <div class="px-6 py-4 border-b border-neutral-800 flex items-center justify-between">
+                        <h2 id="calendar-month-title" class="text-lg font-medium text-white"></h2>
+                        <div class="flex gap-2">
+                            <button onclick="changeMonth(-1)" class="p-1.5 hover:bg-neutral-800 rounded text-neutral-400 hover:text-white transition-colors"><iconify-icon icon="lucide:chevron-left" width="20"></iconify-icon></button>
+                            <button onclick="changeMonth(1)" class="p-1.5 hover:bg-neutral-800 rounded text-neutral-400 hover:text-white transition-colors"><iconify-icon icon="lucide:chevron-right" width="20"></iconify-icon></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 border-b border-neutral-800 bg-neutral-900/50">
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Sun</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Mon</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Tue</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Wed</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Thu</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Fri</div>
+                        <div class="py-2 text-center text-xs font-medium text-neutral-500 uppercase">Sat</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 flex-1 bg-neutral-950/30">
+                        <!-- Calendar Days injected via JS -->
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <!-- Floating Action Button (Desktop Only) -->
+        <!-- Floating Action Button -->
         <button onclick="openModal()" class="hidden md:flex fixed bottom-8 right-8 w-14 h-14 bg-amber-500 hover:bg-amber-400 text-black rounded-full items-center justify-center shadow-lg shadow-amber-900/20 active:scale-95 transition-all z-40 group">
             <iconify-icon icon="lucide:plus" width="28" stroke-width="1.5" class="group-hover:rotate-90 transition-transform duration-300"></iconify-icon>
         </button>
     </div>
 
-    <!-- ADD TASK MODAL OVERLAY -->
+    <!-- ADD TASK MODAL -->
     <div id="modal-overlay" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0">
         <div id="modal-content" class="bg-neutral-950 border border-neutral-800 rounded-xl w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-200">
             <div class="px-6 py-4 border-b border-neutral-800 flex justify-between items-center">
@@ -278,25 +299,31 @@
         </div>
     </div>
 
-    <!-- APP LOGIC -->
+    <!-- SCRIPT -->
     <script>
         // --- State Management ---
         const initialTasks = [
             { id: 1, title: 'Integration by Parts Quiz', course: 'MATH 175', type: 'Quiz', date: '2023-10-25', done: false },
             { id: 2, title: 'Binary Trees Project', course: 'CS 201', type: 'Project', date: '2023-10-28', done: false },
-            { id: 3, title: 'Physics Lab Report', course: 'PHYS 101', type: 'Homework', date: '2023-11-02', done: false }
+            { id: 3, title: 'Physics Lab Report', course: 'PHYS 101', type: 'Homework', date: '2023-11-02', done: false },
+            { id: 4, title: 'Linear Algebra Midterm', course: 'MATH 220', type: 'Exam', date: '2023-11-10', done: false },
+            { id: 5, title: 'Sorting Algorithms', course: 'CS 201', type: 'Homework', date: '2023-10-29', done: true }
         ];
 
         let tasks = JSON.parse(localStorage.getItem('tasks')) || initialTasks;
         let currentUser = localStorage.getItem('currentUser');
+        let currentSort = 'date';
+        let currentFilter = 'all';
+        let currentView = 'dashboard';
+        let calendarDate = new Date();
 
-        // --- Auth Functions ---
+        // --- Init & Auth ---
         function initApp() {
             const authScreen = document.getElementById('auth-screen');
             const appScreen = document.getElementById('app-screen');
             const dateEl = document.getElementById('current-date');
             
-            // Set Date
+            // Set Date in Header
             const options = { weekday: 'long', month: 'long', day: 'numeric' };
             dateEl.textContent = new Date().toLocaleDateString('en-US', options);
 
@@ -305,6 +332,8 @@
                 appScreen.classList.remove('hidden');
                 updateUserProfile();
                 renderTasks();
+                renderCourses();
+                renderCalendar();
             } else {
                 authScreen.classList.remove('hidden');
                 appScreen.classList.add('hidden');
@@ -315,61 +344,100 @@
             e.preventDefault();
             const name = document.getElementById('auth-name').value;
             if(name.trim() === "") return;
-            
             currentUser = name;
             localStorage.setItem('currentUser', currentUser);
-            
-            // Reset tasks for new user simulation if desired, or keep global. 
-            // For this demo, we keep tasks global to persist across re-logins nicely.
-            
             initApp();
         }
 
         function handleLogout() {
             localStorage.removeItem('currentUser');
             currentUser = null;
-            document.getElementById('auth-name').value = ""; // clear form
+            document.getElementById('auth-name').value = ""; 
             initApp();
         }
 
         function updateUserProfile() {
-            const nameEl = document.getElementById('user-name');
-            const avatarEl = document.getElementById('user-avatar');
-            
-            nameEl.textContent = currentUser;
+            document.getElementById('user-name').textContent = currentUser;
             const initials = currentUser.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-            avatarEl.textContent = initials;
+            document.getElementById('user-avatar').textContent = initials;
         }
 
-        // --- Task Management ---
-        function renderTasks(sortMethod = 'date') {
+        // --- Navigation Logic ---
+        function switchView(viewName) {
+            currentView = viewName;
+            
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Show target section
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            
+            // Update Header Title
+            const titles = { 'dashboard': 'Overview', 'courses': 'Your Courses', 'calendar': 'Monthly Schedule' };
+            document.getElementById('page-title').textContent = titles[viewName];
+
+            // Update Navigation Styles (Sidebar)
+            document.querySelectorAll('.nav-btn-desktop').forEach(btn => {
+                const isTarget = btn.getAttribute('data-target') === viewName;
+                if(isTarget) {
+                    btn.classList.add('bg-neutral-900/50', 'text-white', 'border', 'border-neutral-800/50');
+                    btn.classList.remove('text-neutral-400');
+                    btn.querySelector('.icon').classList.add('text-amber-500');
+                } else {
+                    btn.classList.remove('bg-neutral-900/50', 'text-white', 'border', 'border-neutral-800/50');
+                    btn.classList.add('text-neutral-400');
+                    btn.querySelector('.icon').classList.remove('text-amber-500');
+                }
+            });
+
+            // Update Mobile Nav Styles
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => {
+                const isTarget = btn.getAttribute('data-target') === viewName;
+                if(isTarget) {
+                    btn.classList.add('text-amber-500');
+                    btn.classList.remove('text-neutral-500');
+                } else {
+                    btn.classList.remove('text-amber-500');
+                    btn.classList.add('text-neutral-500');
+                }
+            });
+
+            // Refresh specific views if needed
+            if(viewName === 'calendar') renderCalendar();
+            if(viewName === 'courses') renderCourses();
+        }
+
+        // --- Task Functions ---
+        function renderTasks() {
             const listEl = document.getElementById('task-list');
-            const countEl = document.getElementById('sidebar-count');
-            const badgeEl = document.getElementById('task-badge');
+            const countEl = document.getElementById('task-badge');
             const urgentEl = document.getElementById('stat-urgent');
+            const completedEl = document.getElementById('stat-completed');
             
             listEl.innerHTML = '';
 
-            // Sort logic
-            const sortedTasks = [...tasks].sort((a, b) => {
-                if (sortMethod === 'date') return new Date(a.date) - new Date(b.date);
-                if (sortMethod === 'alpha') return a.title.localeCompare(b.title);
+            let filteredTasks = tasks.filter(t => {
+                if(currentFilter === 'all') return true;
+                return t.type === currentFilter;
+            });
+
+            const sortedTasks = [...filteredTasks].sort((a, b) => {
+                if (currentSort === 'date') return new Date(a.date) - new Date(b.date);
+                if (currentSort === 'alpha') return a.title.localeCompare(b.title);
                 return 0;
             });
 
-            // Count pending
+            // Update Stats
             const pendingCount = tasks.filter(t => !t.done).length;
-            countEl.textContent = pendingCount;
-            badgeEl.textContent = `${pendingCount} Pending`;
-            
-            // Urgent logic (arbitrary: within 3 days)
+            countEl.textContent = `${pendingCount} Pending`;
+            completedEl.textContent = tasks.filter(t => t.done).length;
+
             const now = new Date();
             const threeDays = new Date();
             threeDays.setDate(now.getDate() + 3);
-            const urgentCount = tasks.filter(t => !t.done && new Date(t.date) <= threeDays).length;
+            const urgentCount = tasks.filter(t => !t.done && new Date(t.date) <= threeDays && new Date(t.date) >= now).length;
             urgentEl.textContent = urgentCount;
 
-            // Generate HTML
             if (sortedTasks.length === 0) {
                 listEl.innerHTML = `
                     <div class="px-6 py-12 flex flex-col items-center justify-center text-neutral-600">
@@ -383,7 +451,6 @@
                 const dateObj = new Date(task.date);
                 const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 
-                // Color mapping for tags
                 let tagColor = "text-neutral-500 border-neutral-700 bg-neutral-800";
                 let dotColor = "bg-neutral-500";
                 
@@ -430,13 +497,13 @@
                 tasks[index].done = !tasks[index].done;
                 localStorage.setItem('tasks', JSON.stringify(tasks));
                 renderTasks();
+                if(currentView === 'courses') renderCourses(); // Update stats in courses view
             }
         }
 
         function handleAddTask(e) {
             e.preventDefault();
             const formData = new FormData(e.target);
-            
             const newTask = {
                 id: Date.now(),
                 title: formData.get('title'),
@@ -445,24 +512,137 @@
                 date: formData.get('date'),
                 done: false
             };
-
             tasks.push(newTask);
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
             closeModal();
             e.target.reset();
+            // Refresh other views if active
+            if(currentView === 'calendar') renderCalendar();
+            if(currentView === 'courses') renderCourses();
         }
 
-        function sortTasks(val) {
-            renderTasks(val);
+        function filterTasks(val) { currentFilter = val; renderTasks(); }
+        function sortTasks(val) { currentSort = val; renderTasks(); }
+
+        // --- Courses View Logic ---
+        function renderCourses() {
+            const grid = document.getElementById('courses-grid');
+            grid.innerHTML = '';
+            
+            // Extract unique courses
+            const uniqueCourses = [...new Set(tasks.map(t => t.course))];
+            
+            if(uniqueCourses.length === 0) {
+                grid.innerHTML = '<p class="text-neutral-500 col-span-3 text-center">No courses found. Add tasks to see courses here.</p>';
+                return;
+            }
+
+            uniqueCourses.forEach(courseCode => {
+                // Calculate Course Stats
+                const courseTasks = tasks.filter(t => t.course === courseCode);
+                const total = courseTasks.length;
+                const completed = courseTasks.filter(t => t.done).length;
+                const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
+                
+                // Color Logic based on Course Name hash (simple visual distinction)
+                const hue = courseCode.length * 40; 
+                
+                const html = `
+                <div class="bg-neutral-900/30 border border-neutral-800 rounded-xl p-6 hover:border-neutral-700 transition-all group">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 flex items-center justify-center text-white shadow-inner">
+                             <iconify-icon icon="lucide:book" width="20" stroke-width="1.5"></iconify-icon>
+                        </div>
+                        <div class="flex items-center gap-1 bg-neutral-800/50 px-2 py-1 rounded text-xs text-neutral-400">
+                            <iconify-icon icon="lucide:users" width="12"></iconify-icon>
+                            <span>Prof. Smith</span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-medium text-white tracking-tight mb-1">${courseCode}</h3>
+                    <p class="text-xs text-neutral-500 mb-6">Foundations & Application</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs text-neutral-400">
+                            <span>Progress</span>
+                            <span class="text-white">${progress}%</span>
+                        </div>
+                        <div class="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                             <span class="text-xs text-neutral-500">${total - completed} assignments left</span>
+                             <button class="text-neutral-400 hover:text-white transition-colors"><iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon></button>
+                        </div>
+                    </div>
+                </div>`;
+                grid.innerHTML += html;
+            });
         }
 
-        // --- Modal Logic ---
+        // --- Calendar Logic ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const title = document.getElementById('calendar-month-title');
+            grid.innerHTML = '';
+            
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            
+            // Set Title
+            title.textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay(); // 0 = Sun
+            
+            // Padding Days
+            for (let i = 0; i < startingDay; i++) {
+                grid.innerHTML += `<div class="bg-transparent border-r border-b border-neutral-800/50 h-24 md:h-32"></div>`;
+            }
+
+            // Actual Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Find tasks for this day
+                const dayTasks = tasks.filter(t => t.date === currentDateStr);
+                const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+                
+                let taskDots = '';
+                dayTasks.forEach(t => {
+                    let dotColor = "bg-neutral-500";
+                    if(t.type === 'Quiz') dotColor = "bg-amber-500";
+                    if(t.type === 'Project') dotColor = "bg-emerald-500";
+                    if(t.type === 'Exam') dotColor = "bg-red-500";
+                    if(t.type === 'Homework') dotColor = "bg-indigo-500";
+                    taskDots += `<div class="w-1.5 h-1.5 rounded-full ${dotColor}" title="${t.title}"></div>`;
+                });
+
+                grid.innerHTML += `
+                    <div class="bg-transparent border-r border-b border-neutral-800/50 h-24 md:h-32 p-2 hover:bg-neutral-900/30 transition-colors relative group">
+                        <span class="text-xs font-medium ${isToday ? 'bg-amber-500 text-black w-6 h-6 flex items-center justify-center rounded-full' : 'text-neutral-400'}">${day}</span>
+                        <div class="flex flex-wrap gap-1 mt-2 content-start">
+                            ${taskDots}
+                        </div>
+                        ${dayTasks.length > 0 ? `<div class="hidden group-hover:block absolute z-10 bottom-1 left-1 bg-neutral-900 border border-neutral-700 p-2 rounded shadow-xl text-[10px] text-white whitespace-nowrap z-20">${dayTasks.length} Due</div>` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(delta) {
+            calendarDate.setMonth(calendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        // --- Modal ---
         function openModal() {
             const overlay = document.getElementById('modal-overlay');
             const content = document.getElementById('modal-content');
             overlay.classList.remove('hidden');
-            // Trigger animation
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 content.classList.remove('scale-95');
@@ -473,24 +653,17 @@
         function closeModal() {
             const overlay = document.getElementById('modal-overlay');
             const content = document.getElementById('modal-content');
-            
             overlay.classList.add('opacity-0');
             content.classList.add('scale-95');
             content.classList.remove('scale-100');
-            
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-            }, 200);
+            setTimeout(() => { overlay.classList.add('hidden'); }, 200);
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', initApp);
-
-        // Close modal on click outside
         document.getElementById('modal-overlay').addEventListener('click', (e) => {
             if(e.target === e.currentTarget) closeModal();
         });
 
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 
 </body></html>
